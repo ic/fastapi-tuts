@@ -10,6 +10,7 @@ packages = [{include = "repl_nix_fastapi_tuts"}]
 python = "^3.10"
 fastapi = "^0.110.0"
 uvicorn = "0.29.0"
+httpx = "0.27.0"
 
 
 [build-system]

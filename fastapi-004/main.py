@@ -2,11 +2,16 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import httpx
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI()
 
 # Mount the static directory to serve images
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static",
+          StaticFiles(directory=Path(BASE_DIR, 'static')),
+          name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -20,22 +25,23 @@ async def root():
         <title>Simple OG Tags Example</title>
         <!-- Open Graph meta tags -->
         <meta property="og:title" content="Simple OG Tags Example">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="http://localhost/">
-        <meta property="og:image" content="http://localhost/whatIsMyPurpose.jpg">
-        <meta property="og:description" content="A simple example of Open Graph meta tags.">
-        <meta property="og:site_name" content="Simple OG Tags Site">
+        <meta property="og:image" content="https://i.imgur.com/WVi3q3d.jpeg">
+
         <!-- Farcaster frame meta tags -->
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="http://localhost/static/whatIsMyPurpose.jpg">
-        <meta property="fc:frame:button1" content="Button 1">
-        <meta property="fc:frame:button1:action" content="http://localhost/forward">
+        <meta property="fc:frame:image" content="https://i.imgur.com/WVi3q3d.jpeg">
+        
+        <meta property="fc:frame:button:1" content="Forward">
+        <meta property="fc:frame:button:1:action" content="post">
+        <meta property="fc:frame:button:1:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/forward">
+        
+        <meta property="fc:frame:button:2" content="Back">
+        <meta property="fc:frame:button:2:action" content="post">
+        <meta property="fc:frame:button:2:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/back">
 
-        <meta property="fc:frame:button2" content="Button 2">
-        <meta property="fc:frame:button2:action" content="http://localhost/back">
-
-        <meta property="fc:frame:button3" content="Button 3">
-        <meta property="fc:frame:button3:action" content="http://localhost/stop">
+        <meta property="fc:frame:button:3" content="Stop">
+        <meta property="fc:frame:button:3:action" content="post">
+        <meta property="fc:frame:button:3:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/stop">
 
     </head>
     <body>
@@ -44,15 +50,15 @@ async def root():
     </body>
     </html>
     """
-    return HTMLResponse(content=html_content)
+    return HTMLResponse(content=html_content, status_code=200)
 
 
 # endpoint /motor/forward to send GET request to ip address of ESP32
 @app.post("/forward")
-async def forward():
-    url = "http://tumbller/motor/forward"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
+async def forward1():
+    # url = "http://tumbller/motor/forward"
+    # async with httpx.AsyncClient() as client:
+    #     response = await client.get(url)
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -62,23 +68,24 @@ async def forward():
         <title>Simple OG Tags Example</title>
         <!-- Open Graph meta tags -->
         <meta property="og:title" content="Simple OG Tags Example">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="http://localhost/">
-        <meta property="og:image" content="http://localhost/movingForward.png">
-        <meta property="og:description" content="A simple example of Open Graph meta tags.">
-        <meta property="og:site_name" content="Simple OG Tags Site">
+        <meta property="og:image" content="https://i.imgur.com/LH739Tc.png">
+
         <!-- Farcaster frame meta tags -->
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="http://localhost/movingForward.png">
-        <meta property="fc:frame:button1" content="Button 1">
-        <meta property="fc:frame:button1:action" content="http://localhost/forward">
-        <meta property="fc:frame:button1:target" content="_blank">
-        <meta property="fc:frame:button2" content="Button 2">
-        <meta property="fc:frame:button2:action" content="http://localhost/back">
-        <meta property="fc:frame:button2:target" content="_blank">
-        <meta property="fc:frame:button3" content="Button 3">
-        <meta property="fc:frame:button3:action" content="http://localhost/stop">
-        <meta property="fc:frame:button3:target" content="_blank">
+        <meta property="fc:frame:image" content="https://i.imgur.com/LH739Tc.png">
+
+        <meta property="fc:frame:button:1" content="Forward">
+        <meta property="fc:frame:button:1:action" content="post">
+        <meta property="fc:frame:button:1:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/forward">
+        
+        <meta property="fc:frame:button:2" content="Back">
+        <meta property="fc:frame:button:2:action" content="post">
+        <meta property="fc:frame:button:2:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/back">
+
+        <meta property="fc:frame:button:3" content="Stop">
+        <meta property="fc:frame:button:3:action" content="post">
+        <meta property="fc:frame:button:3:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/stop">
+
     </head>
     <body>
         <h1>Tumbller Farcaster Frame Server</h1>
@@ -91,10 +98,10 @@ async def forward():
 
 # endpoint /motor/back to send GET request to ip address of ESP32
 @app.post("/back")
-async def back():
-    url = "http://tumbller/motor/back"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
+async def back1():
+    # url = "http://tumbller/motor/back"
+    # async with httpx.AsyncClient() as client:
+    #     response = await client.get(url)
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -104,23 +111,24 @@ async def back():
         <title>Simple OG Tags Example</title>
         <!-- Open Graph meta tags -->
         <meta property="og:title" content="Simple OG Tags Example">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="http://localhost/">
-        <meta property="og:image" content="http://localhost/movingBack.png">
-        <meta property="og:description" content="A simple example of Open Graph meta tags.">
-        <meta property="og:site_name" content="Simple OG Tags Site">
+        <meta property="og:image" content="https://i.imgur.com/xjRvaTK.png">
+
         <!-- Farcaster frame meta tags -->
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="http://localhost/movingBack.png">
-        <meta property="fc:frame:button1" content="Button 1">
-        <meta property="fc:frame:button1:action" content="http://localhost/forward">
-        <meta property="fc:frame:button1:target" content="_blank">
-        <meta property="fc:frame:button2" content="Button 2">
-        <meta property="fc:frame:button2:action" content="http://localhost/back">
-        <meta property="fc:frame:button2:target" content="_blank">
-        <meta property="fc:frame:button3" content="Button 3">
-        <meta property="fc:frame:button3:action" content="http://localhost/stop">
-        <meta property="fc:frame:button3:target" content="_blank">
+        <meta property="fc:frame:image" content="https://i.imgur.com/xjRvaTK.png">
+
+        <meta property="fc:frame:button:1" content="Forward">
+        <meta property="fc:frame:button:1:action" content="post">
+        <meta property="fc:frame:button:1:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/forward">
+        
+        <meta property="fc:frame:button:2" content="Back">
+        <meta property="fc:frame:button:2:action" content="post">
+        <meta property="fc:frame:button:2:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/back">
+
+        <meta property="fc:frame:button:3" content="Stop">
+        <meta property="fc:frame:button:3:action" content="post">
+        <meta property="fc:frame:button:3:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/stop">
+
     </head>
     <body>
         <h1>Tumbller Farcaster Frame Server</h1>
@@ -133,10 +141,10 @@ async def back():
 
 # endpoint /motor/stop to send GET request to ip address of ESP32
 @app.post("/stop")
-async def stop():
-    url = "http://tumbller/motor/stop"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
+async def stop1():
+    # url = "http://tumbller/motor/stop"
+    # async with httpx.AsyncClient() as client:
+    #     response = await client.get(url)
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -146,20 +154,23 @@ async def stop():
         <title>Simple OG Tags Example</title>
         <!-- Open Graph meta tags -->
         <meta property="og:title" content="Simple OG Tags Example">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="http://localhost/">
-        <meta property="og:image" content="http://localhost/whatIsMyPurpose.jpg">
-        <meta property="og:description" content="A simple example of Open Graph meta tags.">
-        <meta property="og:site_name" content="Simple OG Tags Site">
+        <meta property="og:image" content="https://i.imgur.com/WVi3q3d.jpeg">
+
         <!-- Farcaster frame meta tags -->
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="http://localhost/whatIsMyPurpose.jpg">
-        <meta property="fc:frame:button1" content="Button 1">
-        <meta property="fc:frame:button1:action" content="http://localhost/forward">
-        <meta property="fc:frame:button2" content="Button 2">
-        <meta property="fc:frame:button2:action" content="http://localhost/back">
-        <meta property="fc:frame:button3" content="Button 3">
-        <meta property="fc:frame:button3:action" content="http://localhost/">
+        <meta property="fc:frame:image" content="https://i.imgur.com/WVi3q3d.jpeg">
+        
+        <meta property="fc:frame:button:1" content="Forward">
+        <meta property="fc:frame:button:1:action" content="post">
+        <meta property="fc:frame:button:1:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/forward">
+        
+        <meta property="fc:frame:button:2" content="Back">
+        <meta property="fc:frame:button:2:action" content="post">
+        <meta property="fc:frame:button:2:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/back">
+
+        <meta property="fc:frame:button:3" content="Stop">
+        <meta property="fc:frame:button:3:action" content="post">
+        <meta property="fc:frame:button:3:target" content="https://377220fc-3410-453a-88d6-e7ba128da561-00-3cqg44htlk4z8.pike.replit.dev/stop">
 
     </head>
     <body>

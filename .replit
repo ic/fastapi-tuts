@@ -1,4 +1,4 @@
-run = ["uvicorn", "fastapi-001.main:app", "--host", "0.0.0.0", "--reload"]
+run = ["uvicorn", "fastapi-004.main:app", "--host", "0.0.0.0", "--reload"]
 modules = ["python-3.10:v18-20230807-322e88b"]
 
 [nix]
@@ -15,6 +15,10 @@ hidden = [".pythonlibs"]
 [deployment]
 run = ["uvicorn", "main:app", "--host", "0.0.0.0"]
 deploymentTarget = "cloudrun"
+
+# [[ports]]
+# localPort = 80
+# externalPort = 3000
 
 [[ports]]
 localPort = 8000
